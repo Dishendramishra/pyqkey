@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyQKey</title>
+
+    <link rel="stylesheet" href="static/styles/jquery.datetimepicker.min.css" />
+    <link rel="stylesheet" href="static/styles/jquery_multiselect.css" />
+    <link rel="stylesheet" href="static/styles/tailwind.min.css" />
+
+    <script src="static/js/jquery-3.6.0.min.js"></script>
+    <script src="static/js/jquery.datetimepicker.full.js"></script>
+    <script src="static/js/sweetalert2@11.js"></script>
+    <script src="static/js/jquery_multiselect.js"></script>
+    <script src="static/js/JSON-to-Table.min.1.0.0.js"></script>
+
+
+</head>
+
+<body style="background-color: rgba(0,0,0,0.1);">
+    <div>
+        <h1 class="3xl font-bold p-3">PyQKey Demo</h1>
+    </div>
+    <div class="grid place-items-center">
+        <table>
+            <tr class="">
+                <td class="py-1"><label for="">KME ID</label></td>
+                <td class="py-1"><input class="border-2 hover:bg-grey-200" type="text" name="" id="kme_id"></td>
+            </tr>
+            <tr>
+                <td class="py-1"><button onclick="getStatus()"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Get
+                        Status</button></td>
+                <td class="py-1"><button
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Get
+                        Key</button></td>
+            </tr>
+        </table>
+    </div>
+</body>
+<script>
+    function sendData(url){
+        console.log(url);
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // console.log(xhr.responseText);
+                // var tab = window.open('about:blank', '_blank');
+                // tab.document.write(xhr.responseText);
+                // tab.document.close();                
+                Swal.fire({
+                    html: xhr.responseText,
+                    // width: "100%"
+                });
+            }
+            else if (xhr.readyState === 4 && xhr.status === 201) {
+                Swal.fire({
+                    icon: 'warning',
+                    text: 'No Records Found!',
+                    confirmButtonColor: "#0275d8"
+                });
+            }
+            
+        };
+        xhr.send(null);
+    }
+
+    function getStatus() {
+        $("#kme_id").css("border","1px solid");
+        var kmeId = $("#kme_id").val();
+        if(!kmeId){
+            $("#kme_id").css("border","1px solid red");
+        }
+        else{
+            sendData(url="/api/v1/keys/"+kmeId+"/status");
+        }
+    }
+    function getKey() {
+
+    }
+</script>
+
+</html>

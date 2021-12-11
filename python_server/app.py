@@ -1,19 +1,51 @@
 from flask import *
+from flask_mongoengine import MongoEngine
+import pymongo
 import os
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
 
-
-KME_ID = "IAMONEOFAKIND"
+DOMAIN = "localhost"
+KME_ID = "iamoneofakind"
+MONGOUSER   = os.environ["MONGOUSER"]
+MONGOPASSWD = os.environ["MONGOPASSWD"]
 
 app = Flask(__name__, template_folder='templates')
+
+
+# ==================================================================
+#                           MongoDB Setup
+# ==================================================================
+app.config['MONGODB_SETTINGS'] = {
+    'db'  : 'pyqkey',
+    'host': 'localhost', #os.environ["MONGOIP"],
+    'port': 27017,
+}
+app.secret_key = "nothing"
+
+# db = MongoEngine()
+# db.init_app(app)
+
+# class User(UserMixin,db.Document):
+#     meta = {"collection":"keys"}
+#     key = db.StringField()
+
+myclient = pymongo.MongoClient(
+    "mongodb://{}:27017/".format(DOMAIN), 
+    username = MONGOUSER,
+    password = MONGOPASSWD
+    )
+
+mydb = myclient["pyqkey"]
+mycoll = mydb["keys"]
+# ==================================================================
 
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static/img'),'prl.png')
 
-
 @app.route('/', methods=['GET',"POST"])
 def home():
-    return "Hello"
+   return render_template("index.html")
 
 @app.route('/api/v1/keys/<slave_SAE_ID>/status', methods=['GET'])
 def get_status(slave_SAE_ID):
@@ -48,4 +80,9 @@ def get_status(slave_SAE_ID):
 #     return jsonify(response_data)
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0",port=80, debug=True) 
+    app.run(
+        host="0.0.0.0",
+        port=443, 
+        debug=True,
+        ssl_context =("certificate.pem", "key.pem") 
+        ) 
