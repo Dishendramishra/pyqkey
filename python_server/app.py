@@ -83,7 +83,7 @@ def get_key_with_id(master_SAE_ID):
             "keys" : key
         }
 
-        mycoll.delete_one({"key_ID": key_data["key_ID"]});
+        mycoll.delete_one({"key_ID": key_data["key_ID"]})
 
         return jsonify(response_data)
     else:
@@ -94,5 +94,5 @@ if __name__ == '__main__':
         host="0.0.0.0",
         port=443, 
         debug=True,
-        ssl_context =("certificate.pem", "key.pem") 
+        ssl_context = ("certificate.pem", "key.pem") 
         ) 
