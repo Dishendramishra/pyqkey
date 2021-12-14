@@ -34,7 +34,7 @@
                 <td class="py-1"><button onclick="getStatus()"
                         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Get
                         Status</button></td>
-                <td class="py-1"><button
+                <td class="py-1"><button onclick="getKey()"
                         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Get
                         Key</button></td>
             </tr>
@@ -42,22 +42,22 @@
     </div>
 </body>
 <script>
-    function sendData(url){
+    function sendData(url, method) {
         console.log(url);
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
+        xhr.open(method, url, true);
         xhr.setRequestHeader("Content-Type", "application/json");
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
-                // console.log(xhr.responseText);
-                // var tab = window.open('about:blank', '_blank');
-                // tab.document.write(xhr.responseText);
-                // tab.document.close();                
-                Swal.fire({
-                    html: xhr.responseText,
-                    // width: "100%"
-                });
+                console.log(xhr.responseText);
+                var tab = window.open('about:blank', '_blank');
+                tab.document.write(xhr.responseText);
+                tab.document.close();                
+                // Swal.fire({
+                //     html: constructTable(JSON.parse(xhr.responseText)),
+                //     // width: "100%"
+                // });
             }
             else if (xhr.readyState === 4 && xhr.status === 201) {
                 Swal.fire({
@@ -66,23 +66,52 @@
                     confirmButtonColor: "#0275d8"
                 });
             }
-            
+
         };
         xhr.send(null);
     }
 
-    function getStatus() {
-        $("#kme_id").css("border","1px solid");
-        var kmeId = $("#kme_id").val();
-        if(!kmeId){
-            $("#kme_id").css("border","1px solid red");
+    function constructTable(json) {
+        console.log(json);
+        table = "<table style='border:1px;'>"
+        for (let key in json) {
+            table += `<tr><td>${key}</td><td>${json[key]}</td></tr>`
         }
-        else{
-            sendData(url="/api/v1/keys/"+kmeId+"/status");
+        table += "</table>"
+
+        return `<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title></title>
+            </head>
+            <body>
+            ${table}
+            </body>
+            </html>`
+    }
+
+    function getStatus() {
+        $("#kme_id").css("border", "1px solid");
+        var kmeId = $("#kme_id").val();
+        if (!kmeId) {
+            $("#kme_id").css("border", "1px solid red");
+        }
+        else {
+            sendData(url = "/api/v1/keys/" + kmeId + "/status", method="GET");
         }
     }
-    function getKey() {
 
+    function getKey() {
+        var kmeId = $("#kme_id").val();
+        if (!kmeId) {
+            $("#kme_id").css("border", "1px solid red");
+        }
+        else {
+            sendData(url = "/api/v1/keys/" + kmeId + "/dec_keys", method="POST");
+        }
     }
 </script>
 

@@ -3,6 +3,7 @@ from flask_mongoengine import MongoEngine
 import pymongo
 import os
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
+from pymongo import response
 
 DOMAIN = "localhost"
 KME_ID = "iamoneofakind"
@@ -72,12 +73,21 @@ def get_status(slave_SAE_ID):
 
 #     return jsonify(response_data)
 
-# @app.route('/api/v1/keys/<master_SAE_ID>/dec_keys', methods=['POST'])
-# def get_key_with_id(master_SAE_ID):
-#     response_data = {
-#     }
+@app.route('/api/v1/keys/<master_SAE_ID>/dec_keys', methods=['POST'])
+def get_key_with_id(master_SAE_ID):    
+    key_data = mycoll.find_one()
 
-#     return jsonify(response_data)
+    if key_data:
+        key = {"key_ID": key_data["key_ID"], "key": key_data["key"]}
+        response_data = {
+            "keys" : key
+        }
+
+        mycoll.delete_one({"key_ID": key_data["key_ID"]});
+
+        return jsonify(response_data)
+    else:
+        return "No Keys Left!"
 
 if __name__ == '__main__':
     app.run(
