@@ -9,6 +9,7 @@ import random
 import uuid
 import hashlib
 import base64
+from pprint import pprint
 
 PYQKEY_FLASK_SEC_KEY    = os.environ["PYQKEY_FLASK_SEC_KEY"]
 PYQKEY_KME_ID           = os.environ["PYQKEY_KME_ID"]
@@ -70,18 +71,35 @@ def add_keys():
 
         mycoll.insert_one({"key_ID": str(uuid.uuid4()), "key": base64_digest.decode()})
 
+def get_key_from_db():
+    key_data = mycoll.find_one()
+
+    if key_data:
+        
+        keys = {"keys" : []}
+        key = {"key_ID": key_data["key_ID"], "key": key_data["key"]}
+        
+        keys["keys"].append(key)
+
+        mycoll.delete_one({"key_ID": key_data["key_ID"]})
+
+        return keys
+
 @pyqkey_app.route('/add_dummpy_keys')
 def add_dummpy_keys():
     add_keys()
     return "Keys Added!", 200
 
+
 @pyqkey_app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(pyqkey_app.root_path, 'static/img'),'prl.png')
 
+
 @pyqkey_app.route('/', methods=['GET',"POST"])
 def home():
    return render_template("index.html")
+
 
 @pyqkey_app.route('/api/v1/keys/<slave_SAE_ID>/status', methods=['GET'])
 def get_status(slave_SAE_ID):
@@ -109,40 +127,45 @@ def get_status(slave_SAE_ID):
 
     return jsonify(response_data)
 
-# @pyqkey_app.route('/api/v1/keys/<slave_SAE_ID>/enc_keys', methods=['POST', 'GET'])
-# def get_key(slave_SAE_ID):
-#     response_data = {
-#     }
 
-#     return jsonify(response_data)
+@pyqkey_app.route('/api/v1/keys/<slave_SAE_ID>/enc_keys', methods=['POST', 'GET'])
+def get_key(slave_SAE_ID):
+   
+    keys = get_key_from_db()
+
+    if keys:
+        return jsonify(keys)
+
+    else:
+        add_keys()
+        return jsonify(get_key_from_db())
+
 
 @pyqkey_app.route('/api/v1/keys/<master_SAE_ID>/dec_keys', methods=['POST'])
 def get_key_with_id(master_SAE_ID):    
-    key_data = mycoll.find_one()
 
-    if key_data:
-        
-        keys = {"keys" : []}
-        key = {"key_ID": key_data["key_ID"], "key": key_data["key"]}
-        
-        keys["keys"].append(key)
+    key_ids = request.json["key_IDs"]
+    
+    response_data = {"keys" : []}
 
-        mycoll.delete_one({"key_ID": key_data["key_ID"]})
+    keys = []
+    for key_id_dict in key_ids:
+        keys.append(key_id_dict["key_ID"])
 
-        return jsonify(keys)
-    else:
-        add_keys()
-        key_data = mycoll.find_one()
+    records = mycoll.find({"key_ID" : { "$in" : keys}})
+    result = list(records)
+    
+    if result:
+        for record in result:
+            key = {"key_ID": record["key_ID"], "key": record["key"]}
+            response_data["keys"].append(key)
 
-        key = {"key_ID": key_data["key_ID"], "key": key_data["key"]}
-        response_data = {
-            "keys" : key
-        }
-
-        mycoll.delete_one({"key_ID": key_data["key_ID"]})
+        mycoll.delete_many({"key_ID" : { "$in" : keys}})
 
         return jsonify(response_data)
 
+    else:
+        return "No keys found!", 404
 
 if __name__ == "__main__":
     pyqkey_app.run( 
