@@ -4,54 +4,58 @@ import pymongo
 import os
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
 from pymongo import response
+from waitress import serve
 
-DOMAIN = "localhost"
-KME_ID = "iamoneofakind"
-MONGOUSER   = os.environ["MONGOUSER"]
-MONGOPASSWD = os.environ["MONGOPASSWD"]
+PYQKEY_FLASK_SEC_KEY    = os.environ["PYQKEY_FLASK_SEC_KEY"]
+PYQKEY_KME_ID           = os.environ["PYQKEY_KME_ID"]
+PYQKEY_MONGO_COLL       = os.environ["PYQKEY_MONGO_COLL"]
+PYQKEY_MONGO_DB         = os.environ["PYQKEY_MONGO_DB"]
+PYQKEY_MONGO_DOMAIN     = os.environ["PYQKEY_MONGO_DOMAIN"]
+PYQKEY_MONGO_PASSWD     = os.environ["PYQKEY_MONGO_PASSWD"]
+PYQKEY_MONGO_PORT       = os.environ["PYQKEY_MONGO_PORT"]
+PYQKEY_MONGO_USER       = os.environ["PYQKEY_MONGO_USER"]
 
-app = Flask(__name__, template_folder='templates')
-
+pyqkey_app = Flask(__name__, template_folder='templates')
 
 # ==================================================================
 #                           MongoDB Setup
 # ==================================================================
-app.config['MONGODB_SETTINGS'] = {
-    'db'  : 'pyqkey',
-    'host': 'localhost', #os.environ["MONGOIP"],
-    'port': 27017,
+pyqkey_app.config['MONGODB_SETTINGS'] = {
+    'db'  : PYQKEY_MONGO_DB,
+    'host': PYQKEY_MONGO_DOMAIN,
+    'port': PYQKEY_MONGO_PORT,
 }
-app.secret_key = "nothing"
+pyqkey_app.secret_key = PYQKEY_FLASK_SEC_KEY
 
 # db = MongoEngine()
-# db.init_app(app)
+# db.init_app(pyqkey_app)
 
 # class User(UserMixin,db.Document):
 #     meta = {"collection":"keys"}
 #     key = db.StringField()
 
 myclient = pymongo.MongoClient(
-    "mongodb://{}:27017/".format(DOMAIN), 
-    username = MONGOUSER,
-    password = MONGOPASSWD
+    "mongodb://{}:27017/".format(PYQKEY_MONGO_DOMAIN), 
+    username = PYQKEY_MONGO_USER,
+    password = PYQKEY_MONGO_PASSWD
     )
 
-mydb = myclient["pyqkey"]
-mycoll = mydb["keys"]
+mydb = myclient[PYQKEY_MONGO_DB]
+mycoll = mydb[PYQKEY_MONGO_COLL]
 # ==================================================================
 
-@app.route('/favicon.ico')
+@pyqkey_app.route('/favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static/img'),'prl.png')
+    return send_from_directory(os.path.join(pyqkey_app.root_path, 'static/img'),'prl.png')
 
-@app.route('/', methods=['GET',"POST"])
+@pyqkey_app.route('/', methods=['GET',"POST"])
 def home():
    return render_template("index.html")
 
-@app.route('/api/v1/keys/<slave_SAE_ID>/status', methods=['GET'])
+@pyqkey_app.route('/api/v1/keys/<slave_SAE_ID>/status', methods=['GET'])
 def get_status(slave_SAE_ID):
     response_data = {
-        "source_KME_ID": KME_ID,
+        "source_KME_ID": PYQKEY_KME_ID,
         "target_KME_ID": "EEEEFFFFGGGGHHHH",
         "master_SAE_ID": "IIIIJJJJKKKKLLLL",
         "slave_SAE_ID": slave_SAE_ID,
@@ -66,14 +70,14 @@ def get_status(slave_SAE_ID):
 
     return jsonify(response_data)
 
-# @app.route('/api/v1/keys/<slave_SAE_ID>/enc_keys', methods=['POST', 'GET'])
+# @pyqkey_app.route('/api/v1/keys/<slave_SAE_ID>/enc_keys', methods=['POST', 'GET'])
 # def get_key(slave_SAE_ID):
 #     response_data = {
 #     }
 
 #     return jsonify(response_data)
 
-@app.route('/api/v1/keys/<master_SAE_ID>/dec_keys', methods=['POST'])
+@pyqkey_app.route('/api/v1/keys/<master_SAE_ID>/dec_keys', methods=['POST'])
 def get_key_with_id(master_SAE_ID):    
     key_data = mycoll.find_one()
 
@@ -88,11 +92,3 @@ def get_key_with_id(master_SAE_ID):
         return jsonify(response_data)
     else:
         return "No Keys Left!"
-
-if __name__ == '__main__':
-    app.run(
-        host="0.0.0.0",
-        port=443, 
-        debug=True,
-        ssl_context = ("certificate.pem", "key.pem") 
-        ) 
