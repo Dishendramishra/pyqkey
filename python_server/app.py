@@ -144,6 +144,9 @@ def get_key(slave_SAE_ID):
 @pyqkey_app.route('/api/v1/keys/<master_SAE_ID>/dec_keys', methods=['POST'])
 def get_key_with_id(master_SAE_ID):    
 
+    if not request.json:
+        return "BAD REQUEST", 400
+
     key_ids = request.json["key_IDs"]
     
     response_data = {"keys" : []}
