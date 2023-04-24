@@ -4,3 +4,4 @@ pymongo==3.12.3
 flask_login>=0.5.0
 hupper==1.10.3
 waitress==2.0.0
+pyopenssl
