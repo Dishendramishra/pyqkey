@@ -51,6 +51,8 @@ PYQKEY_MONGO_USER
 
 ![](./python_server/images/environ_vars.gif)
 
+<p style="color:red;"><b>After defining the environment variables you must restart the system.</b></p>
+
 
 
 #### 4. Launching app
