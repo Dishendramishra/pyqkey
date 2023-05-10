@@ -84,9 +84,94 @@ Use the address as shown by the output to access the webpage. for eg.`https://12
 
 
 
-### MongoDB Download
 
-1. **MongoDB Windows**: https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-4.4.19-signed.msi
 
-2. **MongoDB compass** https://downloads.mongodb.com/compass/mongosh-1.8.0-win32-x64.zip
+# MongoDB Setup
+
+
+
+1. #### **Installation:**
+
+---
+
+**MongoDB Windows**: https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-4.4.19-signed.msi
+
+**Install with default options**. It will also install **mongodb compass** in case it doesn't then use the link below to download and install **mongodb compass**. 
+
+**MongoDB compass** https://downloads.mongodb.com/compass/mongodb-compass-1.36.4-win32-x64.exe
+
+---
+
+
+
+2. #### Connecting to Database using Mongodb Compass
+
+   ---
+
+   ![](./python_server/images/mongodb_compass_connect.jpg)
+
+   By default **domain** is **localhost** and **port** is **27017**. 
+
+   Hence default URI is **mongodb://localhost:27017**. Click on connect button to connect.
+
+   ---
+
+   
+
+3. #### Creating the Database and Collection
+
+   ---
+
+   ![](.\python_server\images\creating _db_cols.gif)
+
+   ---
+
+
+
+Set environment variables as shown in **Step 3**:
+
+<p style="color:red;"><b>
+! Below values are just for illustration purpose, use values as per your own requirements !
+</b></p>
+
+​	PYQKEY_FLASK_SEC_KEY 	 =  some_secret
+​	PYQKEY_KME_ID				    = 123
+​	PYQKEY_MONGO_COLL       =  keys
+​	PYQKEY_MONGO_DB           =  pyqkey
+​	PYQKEY_MONGO_DOMAIN = localhost 
+​	PYQKEY_MONGO_PASSWD = admin
+​	PYQKEY_MONGO_PORT       = 27017
+​	PYQKEY_MONGO_USER       =  admin
+
+---
+
+
+
+# Demo
+
+- #### Using browser:
+
+![](.\python_server\images\demo.gif)
+
+
+
+- #### Using curl:
+
+  
+
+  ```bash
+  curl -k  -s https://localhost:443/api/v1/keys/123/status
+  ```
+
+  ![](.\python_server\images\demo_curl_1.gif)
+
+  
+
+  
+
+  ```bash
+  curl -k  -s https://localhost:443/api/v1/keys/123/enc_keys
+  ```
+
+  ![](.\python_server\images\demo_curl_2.gif)
 
