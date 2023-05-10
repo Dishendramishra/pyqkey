@@ -122,7 +122,7 @@ Use the address as shown by the output to access the webpage. for eg.`https://12
 
    ---
 
-   ![](.\python_server\images\creating _db_cols.gif)
+   ![](./python_server/images/creating _db_cols.gif)
 
    ---
 
@@ -133,15 +133,14 @@ Set environment variables as shown in **Step 3**:
 <p style="color:red;"><b>
 ! Below values are just for illustration purpose, use values as per your own requirements !
 </b></p>
-
-​	PYQKEY_FLASK_SEC_KEY 	 =  some_secret
-​	PYQKEY_KME_ID				    = 123
-​	PYQKEY_MONGO_COLL       =  keys
-​	PYQKEY_MONGO_DB           =  pyqkey
-​	PYQKEY_MONGO_DOMAIN = localhost 
-​	PYQKEY_MONGO_PASSWD = admin
-​	PYQKEY_MONGO_PORT       = 27017
-​	PYQKEY_MONGO_USER       =  admin
+​	PYQKEY_FLASK_SEC_KEY 	 =  some_secret <br>
+​	PYQKEY_KME_ID				    = 123  <br>
+​	PYQKEY_MONGO_COLL       =  keys  <br>
+​	PYQKEY_MONGO_DB           =  pyqkey  <br>
+​	PYQKEY_MONGO_DOMAIN = localhost  <br>
+​	PYQKEY_MONGO_PASSWD = admin  <br>
+​	PYQKEY_MONGO_PORT       = 27017  <br>
+​	PYQKEY_MONGO_USER       =  admin  <br>
 
 ---
 
@@ -151,7 +150,7 @@ Set environment variables as shown in **Step 3**:
 
 - #### Using browser:
 
-![](.\python_server\images\demo.gif)
+![](./python_server/images/demo.gif)
 
 
 
@@ -163,7 +162,7 @@ Set environment variables as shown in **Step 3**:
   curl -k  -s https://localhost:443/api/v1/keys/123/status
   ```
 
-  ![](.\python_server\images\demo_curl_1.gif)
+  ![](./python_server/images/demo_curl_1.gif)
 
   
 
@@ -173,5 +172,5 @@ Set environment variables as shown in **Step 3**:
   curl -k  -s https://localhost:443/api/v1/keys/123/enc_keys
   ```
 
-  ![](.\python_server\images\demo_curl_2.gif)
+  ![](./python_server/images/demo_curl_2.gif)
 
