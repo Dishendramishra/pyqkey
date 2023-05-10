@@ -51,8 +51,8 @@ pyqkey_app.secret_key = PYQKEY_FLASK_SEC_KEY
 
 myclient = pymongo.MongoClient(
     "mongodb://{}:27017/".format(PYQKEY_MONGO_DOMAIN), 
-    username = PYQKEY_MONGO_USER,
-    password = PYQKEY_MONGO_PASSWD
+    # username = PYQKEY_MONGO_USER,
+    # password = PYQKEY_MONGO_PASSWD
     )
 
 mydb = myclient[PYQKEY_MONGO_DB]
